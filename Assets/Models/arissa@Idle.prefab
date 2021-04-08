@@ -1724,7 +1724,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1405293929408074421}
+  - component: {fileID: 8769695358186272298}
   - component: {fileID: 2438626448058762541}
   m_Layer: 0
   m_Name: arissa:Cloak_Geo
@@ -1733,15 +1733,15 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1405293929408074421
+--- !u!4 &8769695358186272298
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6199347259891331909}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8807471603081284716}
@@ -1828,8 +1828,8 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 932054041691992990}
   m_AABB:
-    m_Center: {x: -0.04560402, y: -0.104537725, z: -0.054671526}
-    m_Extent: {x: 0.42987818, y: 0.94160056, z: 0.29556444}
+    m_Center: {x: -0.04560402, y: -0.1007638, z: -0.054671526}
+    m_Extent: {x: 0.42987818, y: 0.93782663, z: 0.29556444}
   m_DirtyAABB: 0
 --- !u!1 &6326698761644438768
 GameObject:
@@ -2049,7 +2049,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7775643075078548748}
-  - {fileID: 1405293929408074421}
+  - {fileID: 8769695358186272298}
   - {fileID: 7475148653101853266}
   - {fileID: 517818476143211731}
   m_Father: {fileID: 7993684725138180632}

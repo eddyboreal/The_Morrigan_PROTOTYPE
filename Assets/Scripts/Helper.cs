@@ -8,6 +8,10 @@ public class Helper : MonoBehaviour
     public float vertical;
 
     public Animator anim;
+    public string animationName;
+
+    public bool playAnim = false;
+    public bool enableRM;
 
     // Start is called before the first frame update
     void Start()
@@ -18,6 +22,29 @@ public class Helper : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        anim.SetFloat("vertical", vertical);
+        enableRM = !anim.GetBool("canMove");
+        anim.applyRootMotion = enableRM;
+
+        if (enableRM)
+        {
+            return;
+        }
+        else
+        {
+            if (playAnim)
+            {
+                if(vertical > 0.85)
+                {
+                    anim.CrossFade("dashAttack", 0.2f);
+                }
+                else
+                {
+                    anim.CrossFade(animationName, 0.2f);       
+                }
+                vertical = 0;
+                playAnim = false;
+            }
+            anim.SetFloat("vertical", vertical);
+        }
     }
 }
