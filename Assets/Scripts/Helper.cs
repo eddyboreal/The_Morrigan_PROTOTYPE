@@ -39,9 +39,10 @@ public class Helper : MonoBehaviour
                 }
                 else
                 {
-                    anim.CrossFade(animationName, 0.2f);       
+                    anim.CrossFade(animationName, 0.2f);
+                    vertical = 0;
                 }
-                vertical = 0;
+                
                 playAnim = false;
             }
             anim.SetFloat("vertical", vertical);
