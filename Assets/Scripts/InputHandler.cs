@@ -31,13 +31,6 @@ namespace SA
             GetInput();
             UpdateStates();
             states.FixedTick(Time.deltaTime);
-        }
-
-
-        // Update is called once per frame
-        void Update()
-        {
-            delta = Time.deltaTime;
             camManager.Tick(delta);
         }
 
