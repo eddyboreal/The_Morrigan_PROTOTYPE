@@ -21,16 +21,22 @@ namespace SA
         public float moveSpeed = 5;
         public float runSpeed = 9;
         public float rotateSpeed = 5;
+        public float toGround = 0.5f;
 
         [Header("States")]
         public bool running;
+        public bool onGround;
 
         [HideInInspector]
         public Animator anim;
         [HideInInspector]
         public Rigidbody rigid;
+
+
         [HideInInspector]
         public float delta;
+        [HideInInspector]
+        public LayerMask ignoredLayers;
 
         public void Init()
         {
@@ -39,7 +45,9 @@ namespace SA
             rigid.angularDrag = 999;
             rigid.drag = 4;
             rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-            
+
+            gameObject.layer = 8;
+            ignoredLayers = ~(1 << 9);
         }
 
 
@@ -70,7 +78,7 @@ namespace SA
         {
             delta = d;
 
-            rigid.drag = (moveAmount > 0) ? 0 : 4;
+            rigid.drag = (moveAmount > 0 || onGround) ? 0 : 4;
             float targetSpeed = moveSpeed;
             if (running)
                 targetSpeed = runSpeed;
@@ -89,9 +97,34 @@ namespace SA
             HandleMovementAnimations();
         }
 
+        public void Tick(float d)
+        {
+            delta = d;
+            onGround = OnGround();
+        }
+
         void HandleMovementAnimations()
         {
             anim.SetFloat("vertical", moveAmount, 0.4f, delta);
+        }
+
+        public bool OnGround()
+        {
+            bool r = false;
+
+            Vector3 origin = transform.position + (Vector3.up * toGround);
+            Vector3 dir = -Vector3.up;
+            float dis = toGround + 0.3f;
+
+            RaycastHit hit;
+            if(Physics.Raycast(origin,dir,out hit, dis))
+            {
+                r = true;
+                Vector3 targetPosition = hit.point;
+                transform.position = targetPosition;
+            }
+
+            return r;
         }
     }
 }
