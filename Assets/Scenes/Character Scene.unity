@@ -717,6 +717,11 @@ PrefabInstance:
       propertyPath: playAnim
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1996022594053546226, guid: 9b3ca46522bbd014ba8481dd26a30e4b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2083026892969273509, guid: 9b3ca46522bbd014ba8481dd26a30e4b,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

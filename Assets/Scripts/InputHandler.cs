@@ -29,6 +29,8 @@ namespace SA
         {
             delta = Time.fixedDeltaTime;
             GetInput();
+            UpdateStates();
+            states.FixedTick(Time.deltaTime);
         }
 
 
@@ -50,7 +52,11 @@ namespace SA
             states.horizontal = horizontal;
             states.vertical = vertical;
 
-            states.Tick(Time.deltaTime);
+            Vector3 v = vertical * camManager.transform.forward;
+            Vector3 h = horizontal * camManager.transform.right;
+            states.moveDir = (v + h).normalized;
+            float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
+            states.moveAmount = Mathf.Clamp01(m);
         }
 
     }

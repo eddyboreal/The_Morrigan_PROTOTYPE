@@ -7,11 +7,20 @@ namespace SA
 {
     public class StateManager : MonoBehaviour
     {
-        //Inputs
+        [Header("Init")]
+        public GameObject activeModel;
+
+        [Header("Inputs")]
         public float vertical;
         public float horizontal;
+        public float moveAmount;
+        public Vector3 moveDir;
 
-        public GameObject activeModel;
+        [Header("Stats")]
+
+        public float moveSpeed = 5;
+        public float runSpeed = 9;
+
         [HideInInspector]
         public Animator anim;
         [HideInInspector]
@@ -25,6 +34,8 @@ namespace SA
             rigid = GetComponent<Rigidbody>();
             
         }
+
+
 
         void SetupAnimator()
         {
@@ -48,9 +59,11 @@ namespace SA
             anim.applyRootMotion = false;
         }
 
-        public void Tick(float d)
+        public void FixedTick(float d)
         {
             delta = d;
+
+            rigid.velocity = moveDir * moveSpeed;
         }
     }
 }
