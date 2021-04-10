@@ -19,5 +19,6 @@ public class KeepBool : StateMachineBehaviour
     {
         if(resetOnExit)
         animator.SetBool(boolName, status);
+       
     }
 }

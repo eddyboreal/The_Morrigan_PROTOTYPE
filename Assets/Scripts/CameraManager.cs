@@ -51,8 +51,6 @@ namespace SA
             float c_h = Input.GetAxis("RightAxisX");
             float c_v = Input.GetAxis("RightAxisY");
 
-            Debug.Log(c_h);
-
             float targetSpeed = mouseSpeed;
 
             if(c_h != 0 || c_v != 0)

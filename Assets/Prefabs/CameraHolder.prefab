@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2408001014500986422}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.54, z: 0}
+  m_LocalPosition: {x: 0, y: 1.92, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2408001015963754259}
@@ -78,11 +78,11 @@ MonoBehaviour:
   lockon: 0
   followSpeed: 9
   mouseSpeed: 2
-  controllerSpeed: 5
+  controllerSpeed: 3
   target: {fileID: 0}
   pivot: {fileID: 0}
   camTrans: {fileID: 0}
-  minAngle: -35
+  minAngle: -25
   maxAngle: 35
   lookAngle: 0
   tiltAngle: 0
@@ -112,7 +112,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2408001015963754254}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -5}
+  m_LocalPosition: {x: 0, y: 0, z: -4.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2408001014500986421}

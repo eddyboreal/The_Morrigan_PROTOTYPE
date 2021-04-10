@@ -27,22 +27,27 @@ namespace SA
         public float runSpeed = 9;
         public float rotateSpeed = 5;
         public float toGround = 0.5f;
+        public float actionDelay = 0.3f;
+        float _actionDelayET = 0;
 
-        [Header("EffectiveStats")]
+        /*[Header("EffectiveStats")]
         public float effectiveWalkSpeed = 5 * 0.3f;
         public float effectiveJogSpeed = 7 * 0.65f;
-        public float effectiveRunSpeed = 9 * 1f;
+        public float effectiveRunSpeed = 9 * 1f;*/
 
         [Header("States")]
         public bool jogging;
         public bool running;
         public bool onGround;
         public bool inAction;
+        public bool canMove;
 
         [HideInInspector]
         public Animator anim;
         [HideInInspector]
         public Rigidbody rigid;
+        [HideInInspector]
+        public AnimatorHook a_hook;
 
 
         [HideInInspector]
@@ -57,6 +62,9 @@ namespace SA
             rigid.angularDrag = 999;
             rigid.drag = 4;
             rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+
+            a_hook = activeModel.AddComponent<AnimatorHook>();
+            a_hook.Init(this);
 
             gameObject.layer = 8;
             ignoredLayers = ~(1 << 9);
@@ -90,12 +98,32 @@ namespace SA
         {
             delta = d;
 
+            DetectActions();
+
             inAction = !anim.GetBool("canMove");
+            canMove = anim.GetBool("canMove");
 
             if (inAction)
+            {
+                anim.applyRootMotion = true;
+                
+                _actionDelayET += delta;
+                
+                if(_actionDelayET > 0.3f)
+                {
+                    //inAction = false;
+                    _actionDelayET = 0;
+                }
+                else
+                {
+                    return;
+                }
+            }           
+
+            if (!canMove)
                 return;
 
-            DetectActions();
+            //anim.applyRootMotion = false;
 
             rigid.drag = (moveAmount > 0 || onGround) ? 0 : 4;
             
@@ -131,10 +159,12 @@ namespace SA
             if (rb)
                 targetAnim = "DualWeapon";
 
-            inAction = true;
+            if (string.IsNullOrEmpty(targetAnim))
+                return;
 
-            if (string.IsNullOrEmpty(targetAnim) == false)
-                anim.CrossFade(targetAnim, 0.4f);
+            anim.CrossFade(targetAnim, 0.2f);
+            /*inAction = true;
+            canMove = false;*/
 
         }
 

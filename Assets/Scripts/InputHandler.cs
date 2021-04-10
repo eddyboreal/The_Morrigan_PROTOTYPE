@@ -93,7 +93,9 @@ namespace SA
 
             if (m >= 0 && m <= 0.3f)
             {
-                m = 0;
+                m = 0.001f;
+                states.jogging = false;
+                states.anim.SetBool("jogging", false);
             }
             if(m > 0.3f)
             {
@@ -121,9 +123,7 @@ namespace SA
             
             }
 
-            Debug.Log(m);
-
-            states.moveAmount = Mathf.Clamp01(m);
+            states.moveAmount = m;
         }
 
     }
