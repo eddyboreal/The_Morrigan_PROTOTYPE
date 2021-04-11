@@ -40,7 +40,7 @@ public class Helper : MonoBehaviour
                 else
                 {
                     anim.CrossFade(animationName, 0.2f);
-                    vertical = 0;
+                    vertical = 0.01f;
                 }
                 
                 playAnim = false;

@@ -82,8 +82,6 @@ namespace SA
             }
 
             states.rb = rb_input;
-
-
         }
 
         void SetMoveAmount()

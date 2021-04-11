@@ -28,6 +28,9 @@ namespace SA
         public float rotateSpeed = 5;
         public float toGround = 0.5f;
         public float actionDelay = 0.3f;
+
+        public float dashAttackForce = 6;
+
         float _actionDelayET = 0;
 
         /*[Header("EffectiveStats")]
@@ -41,6 +44,7 @@ namespace SA
         public bool onGround;
         public bool inAction;
         public bool canMove;
+        public bool isActing;
 
         [HideInInspector]
         public Animator anim;
@@ -91,7 +95,8 @@ namespace SA
                 anim = activeModel.GetComponent<Animator>();
             }
 
-            anim.applyRootMotion = false;
+            //anim.applyRootMotion = false;
+
         }
 
         public void FixedTick(float d)
@@ -103,23 +108,29 @@ namespace SA
             inAction = !anim.GetBool("canMove");
             canMove = anim.GetBool("canMove");
 
+            
+
             if (inAction)
             {
-                anim.applyRootMotion = true;
-                
+                rigid.velocity = Vector3.zero;
+                a_hook.enableRootMotion = true;
+
                 _actionDelayET += delta;
                 
                 if(_actionDelayET > 0.3f)
                 {
-                    //inAction = false;
+                    isActing = false;
+                    vertical = 0.01f;
+                    anim.SetFloat("vertical", vertical);
                     _actionDelayET = 0;
                 }
                 else
                 {
                     return;
                 }
-            }           
+            }
 
+            
             if (!canMove)
                 return;
 
@@ -139,8 +150,8 @@ namespace SA
             Quaternion targetRotation = Quaternion.Slerp(transform.rotation, tr, delta * moveAmount * rotateSpeed);
             transform.rotation = targetRotation;
 
-
             HandleMovementAnimations();
+
         }
 
         public void Tick(float d)
@@ -155,9 +166,15 @@ namespace SA
                 return;
 
             string targetAnim = null;
-            
-            if (rb)
-                targetAnim = "DualWeapon";
+
+            if (rb && canMove && !isActing)
+            {
+                isActing = true;
+                if (!running)
+                    targetAnim = "DualWeapon";
+                else
+                    targetAnim = "dashAttack";
+            }                                         
 
             if (string.IsNullOrEmpty(targetAnim))
                 return;
