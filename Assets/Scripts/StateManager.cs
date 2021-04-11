@@ -171,7 +171,8 @@ namespace SA
             {
                 isActing = true;
                 if (!running)
-                    targetAnim = "DualWeapon";
+                    //targetAnim = "light_attack_1";
+                    targetAnim = null;
                 else
                     targetAnim = "dashAttack";
             }                                         
