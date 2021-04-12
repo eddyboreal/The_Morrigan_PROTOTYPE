@@ -22,6 +22,9 @@ namespace SA
         bool lt_input;
         float lt_axis;
 
+        bool leftAxis_down;
+        bool rightAxis_down;
+
         StateManager states;
         CameraManager camManager;
 
@@ -41,7 +44,7 @@ namespace SA
         {
             delta = Time.fixedDeltaTime;
             GetInput();
-            UpdateStates();
+            //UpdateStates();
             states.FixedTick(Time.fixedDeltaTime);
             camManager.Tick(delta);
         }
@@ -49,6 +52,7 @@ namespace SA
         private void Update()
         {
             states.Tick(delta);
+            UpdateStates();
         }
 
         void GetInput()
@@ -59,6 +63,8 @@ namespace SA
             rb_input = Input.GetButton("RB");
             rt_input = Input.GetButton("RT");
             rt_axis = Input.GetAxis("RT");
+
+            rightAxis_down = Input.GetButton("Lock");
 
         }
 
@@ -82,6 +88,17 @@ namespace SA
             }
 
             states.rb = rb_input;
+
+            if (Input.GetButtonDown("Lock"))
+            {
+                states.lockOn = !states.lockOn;
+                if (states.lockOntarget == null)
+                {
+                    states.lockOn = false;
+                }
+                camManager.lockonTarget = states.lockOntarget.transform;
+                camManager.lockon = states.lockOn;
+            }
         }
 
         void SetMoveAmount()
@@ -89,39 +106,55 @@ namespace SA
             float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
             m = Mathf.Clamp01(m);
 
-            if (m >= 0 && m <= 0.3f)
+            if (!states.lockOn)
             {
-                m = 0.001f;
-                states.jogging = false;
-                states.anim.SetBool("jogging", false);
-            }
-            if(m > 0.3f)
-            {
-                if (!states.running)
+                
+                if (m >= 0 && m <= 0.3f)
                 {
-                    if (m <= 0.6f)
+                    m = 0.001f;
+                    states.jogging = false;
+                    states.anim.SetBool("jogging", false);
+                }
+                if (m > 0.3f)
+                {
+                    if (!states.running)
                     {
-                        states.jogging = false;
-                        states.anim.SetBool("jogging", false);
-                        m = 0.3f;
+                        if (m <= 0.6f)
+                        {
+                            states.jogging = false;
+                            states.anim.SetBool("jogging", false);
+                            m = 0.3f;
+                        }
+                        else
+                        {
+                            states.jogging = true;
+                            states.anim.SetBool("jogging", true);
+                            m = 0.66f;
+                        }
                     }
                     else
                     {
-                        states.jogging = true;
-                        states.anim.SetBool("jogging", true);
-                        m = 0.66f;
+                        states.jogging = false;
+                        states.anim.SetBool("jogging", false);
+                        m = 1f;
                     }
+
+                }
+                states.moveAmount = m;
+            }
+            else
+            {
+                if (horizontal < 0.3f && horizontal > -0.3f && vertical < 0.3f && vertical > -0.3f)
+                {
+                    states.moveAmount = 0.0f;
                 }
                 else
                 {
-                    states.jogging = false;
-                    states.anim.SetBool("jogging", false);
-                    m = 1f;
+                    Debug.Log("aled");
+                    states.moveAmount = m;
                 }
-            
             }
-
-            states.moveAmount = m;
+            
         }
 
     }

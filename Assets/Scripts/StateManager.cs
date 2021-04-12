@@ -9,17 +9,22 @@ namespace SA
     public class StateManager : MonoBehaviour
     {
         [Header("Init")]
+        [Space(10)]
         public GameObject activeModel;
         public Slider Slider;
 
         [Header("Inputs")]
+        [Space(10)]
+        [Range(-1,1)]
         public float vertical;
+        [Range(-1, 1)]
         public float horizontal;
         public float moveAmount;
         public Vector3 moveDir;
         public bool rb, rt, lb, lt, b, a, x, y;
 
         [Header("Stats")]
+        [Space(10)]
 
         [SerializeField]
         public float walkSpeed = 5;
@@ -34,22 +39,31 @@ namespace SA
 
 
         [Header("Attacks")]
+        [Space(10)]
 
         public float dashAttackForce = 9;
         public float dashAttackStaminaCost = 30;
 
+        [Space(10)]
         public float light_attack_1_force = 3;
         public float light_attack_1_stamina_cost = 20;
 
+        [Space(10)]
         public float light_attack_2_force = 3;
         public float light_attack_2_stamina_cost = 20;
 
+        [Space(10)]
         public float light_attack_3_force = 3;
         public float light_attack_3_stamina_cost = 20;
 
-
+        [Space(10)]
         public float staminaRunSpeedMultiplier = 1f;
         public float staminaRegenSpeedMultiplier = 1f;
+
+        [Header("Info")]
+        [Space(10)]
+        public int nextAction = 0;
+        public float staminaCost;
 
         float _actionDelayET = 0;
         float _rememberInputTimeET = 0;
@@ -66,8 +80,11 @@ namespace SA
         public bool inAction;
         public bool canMove;
         public bool isActing;
-        public int nextAction = 0;
-        public float staminaCost;
+        public bool lockOn;
+
+        [Header("Other")]
+        public EnnemyTarget lockOntarget;
+
 
         [HideInInspector]
         public Animator anim;
@@ -175,9 +192,16 @@ namespace SA
             
             float targetSpeed = SetSpeed();
 
-            rigid.velocity = moveDir * (targetSpeed * moveAmount);
+            if (onGround)
+            {
+                rigid.velocity = moveDir * (targetSpeed * moveAmount);
+                Debug.Log(moveAmount);
+            }
+                
+            if (running)
+                lockOn = false;
 
-            Vector3 targetDir = moveDir;
+            Vector3 targetDir = (lockOn == false) ? moveDir : lockOntarget.transform.position - transform.position;
             targetDir.y = 0;
             if (targetDir == Vector3.zero)
                 targetDir = transform.forward;
@@ -185,7 +209,12 @@ namespace SA
             Quaternion targetRotation = Quaternion.Slerp(transform.rotation, tr, delta * moveAmount * rotateSpeed);
             transform.rotation = targetRotation;
 
-            HandleMovementAnimations();
+            anim.SetBool("lockon", lockOn);
+
+            if (!lockOn)
+                HandleMovementAnimations();
+            else
+                HandleLockOnAnimations(moveDir);
 
         }
 
@@ -273,6 +302,39 @@ namespace SA
         void HandleMovementAnimations()
         {
             anim.SetFloat("vertical", moveAmount, 0.1f, delta);
+        }
+
+        void HandleLockOnAnimations(Vector3 moveDir)
+        {
+            Vector3 relativDir = transform.InverseTransformDirection(moveDir);
+            float hor = horizontal;
+            float ver = vertical;
+
+            if (hor < 0.3f && hor > -0.3f)
+                hor = 0f;
+            
+            if (hor >= 0.3 && hor <= 0.51f)
+                hor = 0.5f;
+            if (hor > 0.51f)
+                hor = 1f;
+
+            if (hor <= -0.3f && hor >= -0.5f)
+                hor = -0.5f;
+            if (hor < -0.5f)
+                hor = -1;
+
+            if (ver <= 0.3f && ver >= 0.3f)
+                ver = 0f;
+            if (ver > 0.3f)
+                ver = 1f;
+            if (ver < -0.3f)
+                ver = -1f;
+
+            float h = relativDir.x * hor * Mathf.Sign(relativDir.x);
+            float v = relativDir.z * ver * Mathf.Sign(relativDir.z);
+
+            anim.SetFloat("vertical", v, 0.1f, delta);
+            anim.SetFloat("horizontal", h, 0.1f, delta);
         }
 
         float SetSpeed()

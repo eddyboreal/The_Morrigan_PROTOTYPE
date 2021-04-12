@@ -12,6 +12,7 @@ public class KeepBool : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.SetBool(boolName, !status);
+        if(animator.GetComponentInParent<SA.StateManager>())
         animator.GetComponentInParent<SA.StateManager>().rigid.velocity = Vector3.zero;
     }
 
