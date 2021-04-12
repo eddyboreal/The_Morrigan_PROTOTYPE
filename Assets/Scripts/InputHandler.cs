@@ -42,7 +42,7 @@ namespace SA
             delta = Time.fixedDeltaTime;
             GetInput();
             UpdateStates();
-            states.FixedTick(Time.deltaTime);
+            states.FixedTick(Time.fixedDeltaTime);
             camManager.Tick(delta);
         }
 

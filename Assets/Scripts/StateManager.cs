@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 namespace SA
@@ -9,6 +10,7 @@ namespace SA
     {
         [Header("Init")]
         public GameObject activeModel;
+        public Slider Slider;
 
         [Header("Inputs")]
         public float vertical;
@@ -28,10 +30,29 @@ namespace SA
         public float rotateSpeed = 5;
         public float toGround = 0.5f;
         public float actionDelay = 0.3f;
+        public float rememberInputTime = 0.3f;
 
-        public float dashAttackForce = 6;
+
+        [Header("Attacks")]
+
+        public float dashAttackForce = 9;
+        public float dashAttackStaminaCost = 30;
+
+        public float light_attack_1_force = 3;
+        public float light_attack_1_stamina_cost = 20;
+
+        public float light_attack_2_force = 3;
+        public float light_attack_2_stamina_cost = 20;
+
+        public float light_attack_3_force = 3;
+        public float light_attack_3_stamina_cost = 20;
+
+
+        public float staminaRunSpeedMultiplier = 1f;
+        public float staminaRegenSpeedMultiplier = 1f;
 
         float _actionDelayET = 0;
+        float _rememberInputTimeET = 0;
 
         /*[Header("EffectiveStats")]
         public float effectiveWalkSpeed = 5 * 0.3f;
@@ -45,6 +66,8 @@ namespace SA
         public bool inAction;
         public bool canMove;
         public bool isActing;
+        public int nextAction = 0;
+        public float staminaCost;
 
         [HideInInspector]
         public Animator anim;
@@ -52,6 +75,8 @@ namespace SA
         public Rigidbody rigid;
         [HideInInspector]
         public AnimatorHook a_hook;
+        [HideInInspector]
+        public CharacterStats stats;
 
 
         [HideInInspector]
@@ -70,11 +95,11 @@ namespace SA
             a_hook = activeModel.AddComponent<AnimatorHook>();
             a_hook.Init(this);
 
+            stats = GetComponent<CharacterStats>();
+
             gameObject.layer = 8;
             ignoredLayers = ~(1 << 9);
         }
-
-
 
         void SetupAnimator()
         {
@@ -107,17 +132,14 @@ namespace SA
 
             inAction = !anim.GetBool("canMove");
             canMove = anim.GetBool("canMove");
-
-            
-
+           
             if (inAction)
             {
-                rigid.velocity = Vector3.zero;
                 a_hook.enableRootMotion = true;
 
                 _actionDelayET += delta;
                 
-                if(_actionDelayET > 0.3f)
+                if(_actionDelayET > 0.5f)
                 {
                     isActing = false;
                     vertical = 0.01f;
@@ -129,12 +151,25 @@ namespace SA
                     return;
                 }
             }
+            else
+            {
+                if (running)
+                {
+                    float stam = stats.Stamina - delta * staminaRunSpeedMultiplier;
+                    stats.Stamina = Mathf.Clamp(stam, 0, 100);
+                }
+                else
+                {
+                    float stam = stats.Stamina + delta * staminaRegenSpeedMultiplier;
+                    stats.Stamina = Mathf.Clamp(stam, 0, 100);
+                }
+
+                Slider.value = stats.Stamina;
+            }
 
             
             if (!canMove)
                 return;
-
-            //anim.applyRootMotion = false;
 
             rigid.drag = (moveAmount > 0 || onGround) ? 0 : 4;
             
@@ -167,20 +202,69 @@ namespace SA
 
             string targetAnim = null;
 
+            if (canMove)
+                nextAction = 0;
+
             if (rb && canMove && !isActing)
             {
                 isActing = true;
+                _rememberInputTimeET = 0;
                 if (!running)
-                    //targetAnim = "light_attack_1";
-                    targetAnim = null;
+                {
+                    if (nextAction == 0)
+                    {
+                        staminaCost = light_attack_1_stamina_cost;
+                        targetAnim = "light_attack_1";
+                        a_hook.Multiplier = light_attack_1_force;
+                        anim.CrossFade(targetAnim, 0.2f);
+                        nextAction = 1;
+                    }
+                }
                 else
+                {
+                    Debug.Log('a');
                     targetAnim = "dashAttack";
-            }                                         
+                    staminaCost = dashAttackStaminaCost;
+                    a_hook.Multiplier = dashAttackForce;
+                    anim.CrossFade(targetAnim, 0.2f);
+                }
+                    
+            }
+            else if(!canMove && !running)
+            {
+                _rememberInputTimeET += delta;
+                if(!canMove && _rememberInputTimeET >= rememberInputTime && rb)
+                {
+                    _rememberInputTimeET = 0;
+                    if (nextAction == 0)
+                    {
+                        nextAction = 1;
+                        a_hook.Multiplier = light_attack_2_force;
+                        staminaCost = light_attack_2_stamina_cost;
+                    }
+                    else if (nextAction == 1) 
+                    {
+                        nextAction = 2;
+                        a_hook.Multiplier = light_attack_3_force;
+                        staminaCost = light_attack_3_stamina_cost;
+                    }
+                        
+                    else if (nextAction == 2) 
+                    {
+                        nextAction = 0;
+                        a_hook.Multiplier = light_attack_1_force;
+                        staminaCost = light_attack_1_stamina_cost;
+                    }
+                        
+
+                    anim.SetBool("AttackRecorded", true);
+                }
+            }
 
             if (string.IsNullOrEmpty(targetAnim))
                 return;
 
-            anim.CrossFade(targetAnim, 0.2f);
+            
             /*inAction = true;
             canMove = false;*/
 
@@ -204,6 +288,13 @@ namespace SA
                 targetSpeed = runSpeed;
 
             return targetSpeed;
+        }
+
+        public void ChangeStamina()
+        {
+            float stam = stats.Stamina - staminaCost;
+            stats.Stamina = Mathf.Clamp(stam, 0, 100);
+            Slider.value = stats.Stamina;
         }
 
         public bool OnGround()

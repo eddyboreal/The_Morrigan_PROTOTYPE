@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4342286827990015381}
   - component: {fileID: 4342286827990015383}
   - component: {fileID: 4342286827990015380}
+  - component: {fileID: 4430076366118112604}
   m_Layer: 0
   m_Name: Controller
   m_TagString: Untagged
@@ -108,19 +109,55 @@ MonoBehaviour:
   rotateSpeed: 17
   toGround: 0.5
   actionDelay: 0.3
+  rememberInputTime: 0.3
   dashAttackForce: 6
+  light_attack_1_force: 3
+  light_attack_2_force: 3
+  light_attack_3_force: 3
+  staminaRunSpeedMultiplier: 1
+  staminaRegenSpeedMultiplier: 1
   jogging: 0
   running: 0
   onGround: 0
   inAction: 0
   canMove: 0
+  isActing: 0
+  nextAction: 0
   anim: {fileID: 0}
   rigid: {fileID: 0}
   a_hook: {fileID: 0}
+  stats: {fileID: 0}
   delta: 0
   ignoredLayers:
     serializedVersion: 2
     m_Bits: 0
+--- !u!114 &4430076366118112604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4342286827990015376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33123f638370e4c47920fcd7c9f05bba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Life: 100
+  Stamina: 100
+  Rage: 0
+--- !u!114 &2853243137706893936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7433091007722215747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 267ff4124fde16448abe3d53db647ea4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3657758667629883584
 MonoBehaviour:
   m_ObjectHideFlags: 0
