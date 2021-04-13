@@ -8,9 +8,9 @@ namespace SA
     {
         [Header("Stats")]
 
-        public int Life = 100;
+        public float Life = 100;
         public float Stamina = 100;
-        public int Rage = 0;
+        public int Blood = 0;
         // Start is called before the first frame update
         void Start()
         {
@@ -22,6 +22,8 @@ namespace SA
         {
 
         }
+
+       
     }
 }
 

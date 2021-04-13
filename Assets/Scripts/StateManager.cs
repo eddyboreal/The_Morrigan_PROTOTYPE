@@ -11,7 +11,9 @@ namespace SA
         [Header("Init")]
         [Space(10)]
         public GameObject activeModel;
-        public Slider Slider;
+        public Slider LifeSlider;
+        public Slider StaminaSlider;
+        public Slider BloodSlider;
 
         [Header("Inputs")]
         [Space(10)]
@@ -181,7 +183,7 @@ namespace SA
                     stats.Stamina = Mathf.Clamp(stam, 0, 100);
                 }
 
-                Slider.value = stats.Stamina;
+                StaminaSlider.value = stats.Stamina;
             }
 
             
@@ -195,7 +197,6 @@ namespace SA
             if (onGround)
             {
                 rigid.velocity = moveDir * (targetSpeed * moveAmount);
-                Debug.Log(moveAmount);
             }
                 
             if (running)
@@ -352,11 +353,34 @@ namespace SA
             return targetSpeed;
         }
 
+        public void getHit(float damages)
+        {
+            
+            if ((stats.Life - damages) <= 0)
+            {
+                stats.Life = 0;
+                anim.CrossFade("Death", 0.1f);
+            }
+            else
+            {
+                anim.CrossFade("Hit", 0.1f);
+                stats.Life -= damages;
+            }
+            VisualStatUpdate();
+        }
+
         public void ChangeStamina()
         {
             float stam = stats.Stamina - staminaCost;
             stats.Stamina = Mathf.Clamp(stam, 0, 100);
-            Slider.value = stats.Stamina;
+            StaminaSlider.value = stats.Stamina;
+        }
+
+        public void VisualStatUpdate()
+        {
+            LifeSlider.value = stats.Life;
+            StaminaSlider.value = stats.Stamina;
+            BloodSlider.value = stats.Blood;
         }
 
         public bool OnGround()

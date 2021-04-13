@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4430076366118112604}
   m_Layer: 0
   m_Name: Controller
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -58,7 +58,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4342286827990015376}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 99
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -91,6 +91,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activeModel: {fileID: 0}
+  LifeSlider: {fileID: 0}
+  StaminaSlider: {fileID: 0}
+  BloodSlider: {fileID: 0}
   vertical: 0
   horizontal: 0
   moveAmount: 0
@@ -111,18 +114,25 @@ MonoBehaviour:
   actionDelay: 0.3
   rememberInputTime: 0.3
   dashAttackForce: 6
+  dashAttackStaminaCost: 30
   light_attack_1_force: 3
+  light_attack_1_stamina_cost: 20
   light_attack_2_force: 3
+  light_attack_2_stamina_cost: 20
   light_attack_3_force: 3
+  light_attack_3_stamina_cost: 20
   staminaRunSpeedMultiplier: 1
   staminaRegenSpeedMultiplier: 1
+  nextAction: 0
+  staminaCost: 0
   jogging: 0
   running: 0
   onGround: 0
   inAction: 0
   canMove: 0
   isActing: 0
-  nextAction: 0
+  lockOn: 0
+  lockOntarget: {fileID: 0}
   anim: {fileID: 0}
   rigid: {fileID: 0}
   a_hook: {fileID: 0}
@@ -145,7 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Life: 100
   Stamina: 100
-  Rage: 0
+  Blood: 0
 --- !u!114 &2853243137706893936
 MonoBehaviour:
   m_ObjectHideFlags: 0

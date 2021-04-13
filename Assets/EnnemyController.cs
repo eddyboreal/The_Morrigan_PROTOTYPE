@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnnemyController : MonoBehaviour
 {
@@ -11,12 +12,32 @@ public class EnnemyController : MonoBehaviour
     public Animator anim;
     [HideInInspector]
     public Rigidbody rigid;
+    [HideInInspector]
+    public NavMeshAgent agent;
+
+    public Transform[] waypoints;
+    public int actualWaypointPos;
+    public Transform attackSphereDetectionCenter;
+    public float sphereRadius;
+
+    public GameObject player;
+    
+    [Space(10)]
+    [Header("Stats")]
+    public float Life = 200;
+    public float damages = 27;
+
+    [Space(10)]
+    [Header("States")]
+    public bool isWandering;
+    public bool isFollowing;
+    public bool isAttacking;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        SetupAnimator();
     }
     void SetupAnimator()
     {
@@ -37,6 +58,9 @@ public class EnnemyController : MonoBehaviour
             anim = activeModel.GetComponent<Animator>();
         }
 
+        agent = GetComponent<NavMeshAgent>();
+        agent.destination = waypoints[0].position;
+
         //anim.applyRootMotion = false;
 
     }
@@ -44,6 +68,89 @@ public class EnnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (isFollowing)
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(attackSphereDetectionCenter.position, sphereRadius);
+            foreach (var hitCollider in hitColliders)
+            {
+                if(hitCollider.tag == "Player")
+                {
+                    anim.CrossFade("Attack", 0.2f);
+                    agent.isStopped = true;
+                    isFollowing = false;
+                    break;
+                } 
+            }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(attackSphereDetectionCenter.position, sphereRadius);
+    }
+
+    private void FixedUpdate()
+    {
+        if (isFollowing)
+        {
+            if (agent.isStopped)
+                agent.isStopped = false;
+            isWandering = false;
+            agent.destination = player.transform.position;
+        }
+            
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (isWandering && other.gameObject.tag == "waypoint")
+        {
+            SelectNewNode();
+        }
+
+        if (!isFollowing && other.gameObject.tag == "Player")
+        {
+            isFollowing = true;
+            anim.SetBool("playerDetected", true);
+            player = other.gameObject;
+            agent.destination = player.transform.position;
+            agent.speed = 6;
+        }
+    }
+
+    public void SelectNewNode()
+    {
+        int nextNodePos = 0;
+        if(actualWaypointPos != waypoints.Length - 1)
+        {
+            nextNodePos = actualWaypointPos+1;
+        }
+        actualWaypointPos = nextNodePos;
+        agent.destination = waypoints[nextNodePos].position;
+    }
+
+    public void getHit(int damages)
+    {
+        if ((Life - damages) <= 0)
+        {
+            Life = 0;
+        }
+        else
+        {
+            Life -= damages;
+        }
+    }
+
+    public void CheckHit()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(attackSphereDetectionCenter.position, sphereRadius);
+        foreach (var hitCollider in hitColliders)
+        {
+            if (hitCollider.tag == "Player")
+            {
+                hitCollider.GetComponent<SA.StateManager>().getHit(damages);
+                break;
+            }
+        }
     }
 }

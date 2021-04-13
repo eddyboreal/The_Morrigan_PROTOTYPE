@@ -150,7 +150,6 @@ namespace SA
                 }
                 else
                 {
-                    Debug.Log("aled");
                     states.moveAmount = m;
                 }
             }
