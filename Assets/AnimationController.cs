@@ -16,4 +16,10 @@ public class AnimationController : MonoBehaviour
         
     }
 
+
+    public void CheckDamage()
+    {
+        GetComponentInParent<SA.StateManager>().CheckHit();
+    }
+
 }

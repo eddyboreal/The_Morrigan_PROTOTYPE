@@ -86,6 +86,7 @@ namespace SA
 
         [Header("Other")]
         public EnnemyTarget lockOntarget;
+        public Transform attackSphereDetectionCenter;
 
 
         [HideInInspector]
@@ -367,6 +368,18 @@ namespace SA
                 stats.Life -= damages;
             }
             VisualStatUpdate();
+        }
+        public void CheckHit()
+        {
+            Collider[] hitColliders = Physics.OverlapSphere(attackSphereDetectionCenter.position, 2);
+            foreach (var hitCollider in hitColliders)
+            {
+                if (hitCollider.tag == "Ennemy")
+                {
+                    hitCollider.GetComponent<EnnemyController>().getHit(45);
+                    break;
+                }
+            }
         }
 
         public void ChangeStamina()

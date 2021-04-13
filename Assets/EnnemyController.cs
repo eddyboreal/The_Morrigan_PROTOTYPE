@@ -32,6 +32,7 @@ public class EnnemyController : MonoBehaviour
     public bool isWandering;
     public bool isFollowing;
     public bool isAttacking;
+    public bool isDead;
 
 
     // Start is called before the first frame update
@@ -68,7 +69,7 @@ public class EnnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isFollowing)
+        if (isFollowing && !isDead)
         {
             Collider[] hitColliders = Physics.OverlapSphere(attackSphereDetectionCenter.position, sphereRadius);
             foreach (var hitCollider in hitColliders)
@@ -91,7 +92,7 @@ public class EnnemyController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (isFollowing)
+        if (isFollowing && !isDead)
         {
             if (agent.isStopped)
                 agent.isStopped = false;
@@ -103,18 +104,21 @@ public class EnnemyController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (isWandering && other.gameObject.tag == "waypoint")
+        if (!isDead)
         {
-            SelectNewNode();
-        }
+            if (isWandering && other.gameObject.tag == "waypoint")
+            {
+                SelectNewNode();
+            }
 
-        if (!isFollowing && other.gameObject.tag == "Player")
-        {
-            isFollowing = true;
-            anim.SetBool("playerDetected", true);
-            player = other.gameObject;
-            agent.destination = player.transform.position;
-            agent.speed = 6;
+            if (!isFollowing && other.gameObject.tag == "Player")
+            {
+                isFollowing = true;
+                anim.SetBool("playerDetected", true);
+                player = other.gameObject;
+                agent.destination = player.transform.position;
+                agent.speed = 6;
+            }
         }
     }
 
@@ -133,6 +137,9 @@ public class EnnemyController : MonoBehaviour
     {
         if ((Life - damages) <= 0)
         {
+            anim.CrossFade("Death", 0.1f);
+            isDead = true;
+            agent.isStopped = true;
             Life = 0;
         }
         else
