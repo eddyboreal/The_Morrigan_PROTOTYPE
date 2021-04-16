@@ -243,7 +243,7 @@ namespace SA
                 isActing = true;
                 staminaCost = 0;
                 a_hook.Multiplier = 10f;
-                targetAnim = "DodgeLeft";
+                targetAnim = "MMAKick";
                 anim.CrossFade(targetAnim, 0.2f);
             }
             if (rb && canMove && !isActing)
