@@ -87,6 +87,7 @@ namespace SA
         [Header("Other")]
         public EnnemyTarget lockOntarget;
         public Transform attackSphereDetectionCenter;
+        public Transform[] EnnemyTransforms;
 
 
         [HideInInspector]
@@ -236,6 +237,15 @@ namespace SA
             if (canMove)
                 nextAction = 0;
 
+            if(rt && canMove && !isActing)
+            {
+                rt = false;
+                isActing = true;
+                staminaCost = 0;
+                a_hook.Multiplier = 10f;
+                targetAnim = "DodgeLeft";
+                anim.CrossFade(targetAnim, 0.2f);
+            }
             if (rb && canMove && !isActing)
             {
                 isActing = true;
@@ -253,7 +263,6 @@ namespace SA
                 }
                 else
                 {
-                    Debug.Log('a');
                     targetAnim = "dashAttack";
                     staminaCost = dashAttackStaminaCost;
                     a_hook.Multiplier = dashAttackForce;

@@ -25,6 +25,8 @@ namespace SA
         bool leftAxis_down;
         bool rightAxis_down;
 
+        bool RT_in_use;
+
         StateManager states;
         CameraManager camManager;
 
@@ -89,6 +91,17 @@ namespace SA
 
             states.rb = rb_input;
 
+            if(rt_axis != 0)
+            {
+                if (!RT_in_use)
+                {
+                    RT_in_use = true;
+                    states.rt = true;
+                }
+            }
+            if (rt_axis == 0)
+                RT_in_use = false;
+
             if (Input.GetButtonDown("Lock"))
             {
                 states.lockOn = !states.lockOn;
@@ -96,9 +109,27 @@ namespace SA
                 {
                     states.lockOn = false;
                 }
-                camManager.lockonTarget = states.lockOntarget.transform;
+                camManager.lockonTarget = SelectNearestEnnemy();
                 camManager.lockon = states.lockOn;
             }
+        }
+
+        private Transform SelectNearestEnnemy()
+        {
+            Transform target = null;
+            float distance = 5000;
+            foreach(Transform ennemy in states.EnnemyTransforms)
+            {
+                if (ennemy.GetComponent<EnnemyController>().isDead)
+                    continue;
+                if (distance == 5000 || Vector3.Distance(ennemy.transform.position, transform.position) < distance)
+                {
+                    distance = Vector3.Distance(ennemy.transform.position, transform.position);
+                    target = ennemy;
+                }
+                    
+            }
+            return target;
         }
 
         void SetMoveAmount()

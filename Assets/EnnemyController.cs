@@ -60,6 +60,7 @@ public class EnnemyController : MonoBehaviour
         }
 
         agent = GetComponent<NavMeshAgent>();
+        if(isWandering)
         agent.destination = waypoints[0].position;
 
         //anim.applyRootMotion = false;
@@ -111,12 +112,18 @@ public class EnnemyController : MonoBehaviour
                 SelectNewNode();
             }
 
-            if (!isFollowing && other.gameObject.tag == "Player")
+            if (isWandering && !isFollowing && other.gameObject.tag == "Player")
             {
                 isFollowing = true;
                 anim.SetBool("playerDetected", true);
                 player = other.gameObject;
                 agent.destination = player.transform.position;
+                agent.speed = 6;
+            }
+            else if(!isWandering && !isFollowing && other.gameObject.tag == "Player")
+            {
+                anim.SetBool("playerDetected", true);
+                player = other.gameObject;
                 agent.speed = 6;
             }
         }

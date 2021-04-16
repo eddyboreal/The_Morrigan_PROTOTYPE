@@ -23,6 +23,7 @@ namespace SA
         {
             if (enableRootMotion && !states.canMove)
             {
+                Debug.Log("a");
                 states.rigid.velocity = Vector3.zero;
                 states.rigid.drag = 0;
                 Vector3 delta = anim.deltaPosition;
