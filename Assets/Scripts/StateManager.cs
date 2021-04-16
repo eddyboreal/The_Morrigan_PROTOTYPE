@@ -14,6 +14,7 @@ namespace SA
         public Slider LifeSlider;
         public Slider StaminaSlider;
         public Slider BloodSlider;
+        public CameraManager camManager;
 
         [Header("Inputs")]
         [Space(10)]
@@ -88,6 +89,8 @@ namespace SA
         public EnnemyTarget lockOntarget;
         public Transform attackSphereDetectionCenter;
         public Transform[] EnnemyTransforms;
+
+        public GameObject spriteLock;
 
 
         [HideInInspector]
@@ -225,6 +228,20 @@ namespace SA
         {
             delta = d;
             onGround = OnGround();
+        }
+
+        public void Update()
+        {
+            if (lockOn)
+            {
+                spriteLock.SetActive(true);
+                Vector3 Pos = Camera.main.WorldToScreenPoint(camManager.target.position);
+                spriteLock.transform.position = Pos;
+            }
+            else
+            {
+                spriteLock.SetActive(false);
+            }
         }
 
         public void DetectActions()
